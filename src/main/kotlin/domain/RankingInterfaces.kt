@@ -11,9 +11,10 @@ internal interface RankingCommand {
 }
 
 internal interface RankingQuery {
-    fun findChart(mid: MusicId, mode: Mode, diff: Difficulty): ChartWithLastUpdateDateTime
-    fun earliestUpdatedChart(): ChartWithLastUpdateDateTime
-    fun ranking(chart: Chart): Records
+    fun rankingHeader(mid: MusicId, mode: Mode, diff: Difficulty): RecordHeader
+    fun earliestUpdatedRanking(): RecordHeader
+    fun ranking(header: RecordHeader): Records
+    fun ranking(mid: MusicId, mode: Mode, diff: Difficulty) = ranking(rankingHeader(mid, mode, diff))
     fun recordsBetween(from: DateTime, to: DateTime): Records
     fun recordsOf(rivalId: RivalId): Records
 }

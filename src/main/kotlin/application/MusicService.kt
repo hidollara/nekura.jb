@@ -10,7 +10,7 @@ internal class MusicService(
     fun all(): Musics = musicQuery.all()
 
     fun ranking(mid: MusicId, mode: Mode, diff: Difficulty): Records =
-        rankingQuery.findChart(mid, mode, diff).let { chart ->
+        rankingQuery.rankingHeader(mid, mode, diff).let { chart ->
             rankingUpdateManager.updateIfNeed(chart)
             rankingQuery.ranking(chart)
         }

@@ -29,7 +29,7 @@ internal open class Chart(
     override fun toString() = "Chart(mid=$mid, mode=$mode, diff=$diff)"
 }
 
-internal class ChartWithLastUpdateDateTime(
+internal class RecordHeader(
     mid: MusicId, mode: Mode, diff: Difficulty, val lastUpdatedAt: DateTime
 ) : Chart(mid, mode, diff) {
     fun needUpdate(intervalMinutes: Int) =

@@ -24,7 +24,7 @@ internal class MySqlMusicCommand(private val db: Database) : MusicCommand {
                     musics.map { music ->
                         Mode.values().map { mode ->
                             Difficulty.values().map { diff ->
-                                ChartWithLastUpdateDateTime(
+                                RecordHeader(
                                     music.mid, mode, diff, DateTime.parse("1970-01-01")
                                 )
                             }
