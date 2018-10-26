@@ -42,3 +42,7 @@ internal data class Record(
 )
 
 internal typealias Records = List<Record>
+
+internal data class Ranking(
+    val header: RecordHeader, val records: Records
+)

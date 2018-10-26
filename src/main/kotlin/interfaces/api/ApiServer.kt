@@ -16,6 +16,7 @@ import io.ktor.jackson.jackson
 import io.ktor.locations.*
 import io.ktor.response.respond
 import io.ktor.routing.Routing
+import io.ktor.routing.route
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 
@@ -31,15 +32,23 @@ object ApiServer {
             }
         }
         install(Routing) {
-            get<Music> { call.respond(Context.musicService.all()) }
-            get<Ranker> { ranker ->
-                call.respond(Context.rankerService.rankerRecords(ranker.rivalId))
-            }
-            get<Ranking> { ranking ->
-                call.respond(Context.musicService.ranking(ranking.mid, ranking.mode, ranking.diff))
-            }
-            get<Record> { record ->
-                call.respond(Context.latestUpdateService.latestUpdates(record.range))
+            route("/api") {
+                get<Musics> { call.respond(Context.musicService.all()) }
+                get<Musics.Music> { music ->
+                    // TODO: call.respond(Context.musicService.detail(music.mid))
+                }
+                get<Rankers> {
+                    // TODO: call.respond(Context.rankerService.all())
+                }
+                get<Rankers.Ranker> { ranker ->
+                    call.respond(Context.rankerService.records(ranker.rivalId))
+                }
+                get<Ranking> { ranking ->
+                    call.respond(Context.rankingService.ranking(ranking.mid, ranking.mode, ranking.diff))
+                }
+                get<Record> { record ->
+                    call.respond(Context.recordService.latestRecords(record.range))
+                }
             }
         }
     }
@@ -47,10 +56,13 @@ object ApiServer {
     fun start() = server.start(true)
 }
 
-@Location("/musics") class Music
+@Location("/musics") internal class Musics {
+    @Location("/{mid}") internal data class Music(val mid: Int)
+}
 
-@Location("/rankers/{rivalId}")
-internal data class Ranker(val rivalId: RivalId)
+@Location("/rankers") internal class Rankers {
+    @Location("/{rivalId}") internal data class Ranker(val rivalId: RivalId)
+}
 
 @Location("/rankings")
 internal data class Ranking(val mid: MusicId, val mode: Mode, val diff: Difficulty)

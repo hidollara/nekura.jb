@@ -1,14 +1,12 @@
-package application
-
-import domain.*
+package domain
 
 internal class RankingUpdateManager(
     private val rankingCommand: RankingCommand,
-    private val rankingQuery: RankingQuery,
+    private val recordHeaderQuery: RecordHeaderQuery,
     private val rankingFetcher: RankingFetcher,
     private val intervalMinutes: Int
 ) {
-    fun pick(): Chart = rankingQuery.earliestUpdatedRanking()
+    fun pick(): Chart = recordHeaderQuery.earliestUpdatedRanking()
 
     fun updateIfNeed(chart: RecordHeader) =
         chart.takeIf { it.needUpdate(intervalMinutes) }

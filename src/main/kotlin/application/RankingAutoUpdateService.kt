@@ -2,9 +2,10 @@ package application
 
 import domain.RankingCommand
 import domain.RankingFetcher
+import domain.RankingUpdateManager
 import kotlin.concurrent.timer
 
-internal class RankingAutoUpdater(
+internal class RankingAutoUpdateService(
     private val rankingCommand: RankingCommand,
     private val rankingFetcher: RankingFetcher,
     private val manager: RankingUpdateManager
@@ -14,6 +15,6 @@ internal class RankingAutoUpdater(
     }
 
     fun start() {
-        timer(name = "Nekura.jb - Ranking Auto Updater", period = 60000) { this@RankingAutoUpdater.run() }
+        timer(name = "Nekura.jb - Ranking Auto Updater", period = 60000) { this@RankingAutoUpdateService.run() }
     }
 }
