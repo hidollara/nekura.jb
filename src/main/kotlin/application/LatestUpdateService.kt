@@ -1,9 +1,9 @@
 package application
 
-import domain.RankingQuery
+import domain.RecordQuery
 import org.joda.time.DateTime
 
-internal class LatestUpdateService(private val rankingQuery: RankingQuery) {
+internal class LatestUpdateService(private val recordQuery: RecordQuery) {
     fun latestUpdates(days: Int) =
-        rankingQuery.recordsBetween(DateTime.now().minusDays(days), DateTime.now())
+        recordQuery.recordsBetween(DateTime.now().minusDays(days), DateTime.now())
 }

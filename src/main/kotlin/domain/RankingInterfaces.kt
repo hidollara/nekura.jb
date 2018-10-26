@@ -15,6 +15,9 @@ internal interface RankingQuery {
     fun earliestUpdatedRanking(): RecordHeader
     fun ranking(header: RecordHeader): Records
     fun ranking(mid: MusicId, mode: Mode, diff: Difficulty) = ranking(rankingHeader(mid, mode, diff))
+}
+
+internal interface RecordQuery {
     fun recordsBetween(from: DateTime, to: DateTime): Records
     fun recordsOf(rivalId: RivalId): Records
 }

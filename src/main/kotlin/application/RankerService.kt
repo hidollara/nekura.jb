@@ -1,10 +1,10 @@
 package application
 
-import domain.RankingQuery
+import domain.RecordQuery
 import domain.RivalId
 
 internal class RankerService(
-    private val rankingQuery: RankingQuery
+    private val recordQuery: RecordQuery
 ) {
-    fun rankerRecords(rivalId: RivalId) = rankingQuery.recordsOf(rivalId)
+    fun rankerRecords(rivalId: RivalId) = recordQuery.recordsOf(rivalId)
 }
