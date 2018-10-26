@@ -35,11 +35,9 @@ object ApiServer {
             route("/api") {
                 get<Musics> { call.respond(Context.musicService.all()) }
                 get<Musics.Music> { music ->
-                    // TODO: call.respond(Context.musicService.detail(music.mid))
+                    call.respond(Context.musicService.detail(music.mid))
                 }
-                get<Rankers> {
-                    // TODO: call.respond(Context.rankerService.all())
-                }
+                get<Rankers> { call.respond(Context.rankerService.all()) }
                 get<Rankers.Ranker> { ranker ->
                     call.respond(Context.rankerService.records(ranker.rivalId))
                 }
@@ -57,7 +55,7 @@ object ApiServer {
 }
 
 @Location("/musics") internal class Musics {
-    @Location("/{mid}") internal data class Music(val mid: Int)
+    @Location("/{mid}") internal data class Music(val mid: MusicId)
 }
 
 @Location("/rankers") internal class Rankers {
