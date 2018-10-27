@@ -9,6 +9,10 @@ internal data class Music(
 
 internal typealias Musics = List<Music>
 
+internal enum class Difficulty(val seq: Int) {
+    BASIC(0), ADVANCED(1), EXTREME(2)
+}
+
 internal data class Level(
     val mainLevel: Int,
     val subLevel: Int = 0

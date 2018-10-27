@@ -7,10 +7,6 @@ internal enum class Mode(val rankingPage: String) {
     HARD("https://p.eagate.573.jp/game/jubeat/festo/ranking/best_score_hard.html")
 }
 
-internal enum class Difficulty(val seq: Int) {
-    BASIC(0), ADVANCED(1), EXTREME(2)
-}
-
 internal typealias RivalId = Long
 
 internal data class Player(
