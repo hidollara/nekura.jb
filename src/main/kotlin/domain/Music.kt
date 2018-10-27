@@ -1,5 +1,7 @@
 package domain
 
+import org.joda.time.DateTime
+
 internal typealias MusicId = Int
 
 internal data class Music(
@@ -32,4 +34,16 @@ internal open class Chart(
     fun rankingPageWithPage(page: Int) = "$rankingPage&page=$page"
 
     override fun toString() = "Chart(mid=$mid, mode=$mode, diff=$diff)"
+}
+
+internal enum class Mode(val rankingPage: String) {
+    NORMAL("https://p.eagate.573.jp/game/jubeat/festo/ranking/best_score.html"),
+    HARD("https://p.eagate.573.jp/game/jubeat/festo/ranking/best_score_hard.html")
+}
+
+internal class RecordHeader(
+    mid: MusicId, mode: Mode, diff: Difficulty, val lastUpdatedAt: DateTime
+) : Chart(mid, mode, diff, /* TODO */ null) {
+    fun needUpdate(intervalMinutes: Int) =
+        lastUpdatedAt.isBefore(DateTime.now().minusMinutes(intervalMinutes))
 }
