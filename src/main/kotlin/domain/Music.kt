@@ -10,8 +10,8 @@ internal data class Music(
 internal typealias Musics = List<Music>
 
 internal data class Level(
-    private val mainLevel: Int,
-    private val subLevel: Int = 0
+    val mainLevel: Int,
+    val subLevel: Int = 0
 ) {
     init {
         if (mainLevel !in (1..10)) throw IllegalArgumentException()
@@ -22,7 +22,7 @@ internal data class Level(
 }
 
 internal open class Chart(
-    val mid: MusicId, val mode: Mode, val diff: Difficulty
+    val mid: MusicId, val mode: Mode, val diff: Difficulty, val level: Level?
 ) {
     val rankingPage = "${mode.rankingPage}?mid=$mid&seq=${diff.seq}"
     fun rankingPageWithPage(page: Int) = "$rankingPage&page=$page"

@@ -22,7 +22,7 @@ internal data class Player(
 
 internal class RecordHeader(
     mid: MusicId, mode: Mode, diff: Difficulty, val lastUpdatedAt: DateTime
-) : Chart(mid, mode, diff) {
+) : Chart(mid, mode, diff, /* TODO */ null) {
     fun needUpdate(intervalMinutes: Int) =
         lastUpdatedAt.isBefore(DateTime.now().minusMinutes(intervalMinutes))
 }

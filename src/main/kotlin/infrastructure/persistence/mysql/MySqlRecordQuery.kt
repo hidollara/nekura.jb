@@ -39,7 +39,7 @@ internal class MySqlRecordQuery(private val db: Database) : RecordQuery {
     private fun Query.toRecords(): Records =
         map {
             Record(
-                Chart(it[Schema.Records.mid], it[Schema.Records.mode], it[Schema.Records.diff]),
+                Chart(it[Schema.Records.mid], it[Schema.Records.mode], it[Schema.Records.diff], /* TODO */ null),
                 Player(it[Schema.Players.rivalId], it[Schema.Players.name]),
                 it[Schema.Records.bestScore], it[Schema.Records.recordedAt]
             )
