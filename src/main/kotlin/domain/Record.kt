@@ -20,15 +20,6 @@ internal data class Player(
     val playdataPage = "https://p.eagate.573.jp/game/jubeat/festo/playdata/index_other.html?rival_id=$rivalId"
 }
 
-internal open class Chart(
-    val mid: MusicId, val mode: Mode, val diff: Difficulty
-) {
-    val rankingPage = "${mode.rankingPage}?mid=$mid&seq=${diff.seq}"
-    fun rankingPageWithPage(page: Int) = "$rankingPage&page=$page"
-
-    override fun toString() = "Chart(mid=$mid, mode=$mode, diff=$diff)"
-}
-
 internal class RecordHeader(
     mid: MusicId, mode: Mode, diff: Difficulty, val lastUpdatedAt: DateTime
 ) : Chart(mid, mode, diff) {
