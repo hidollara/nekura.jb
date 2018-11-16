@@ -7,8 +7,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 
 internal class MySqlRankingCommand(private val db: Database) : RankingCommand {
-    override fun pull(fetcher: RankingFetcher, chart: Chart) {
-        val records = fetcher.fetch(chart)
+    override fun pull(fetcher: RankingFetcher, header: RecordHeader) {
+        val records = fetcher.fetch(header)
         transaction(db) {
             Schema.Players
                 .batchInsertOnDuplicateKeyUpdate(records.map { it.player }, Schema.Players.columns) { batch, player ->
@@ -17,15 +17,15 @@ internal class MySqlRankingCommand(private val db: Database) : RankingCommand {
                 }
             Schema.Records
                 .batchInsertOnDuplicateKeyUpdate(records, Schema.Records.columns) { batch, record ->
-                    batch[mid] = record.chart.mid
-                    batch[mode] = record.chart.mode
-                    batch[diff] = record.chart.diff
+                    batch[mid] = record.header.mid
+                    batch[mode] = record.header.mode
+                    batch[diff] = record.header.diff
                     batch[rivalId] = record.player.rivalId
                     batch[bestScore] = record.bestScore
                     batch[recordedAt] = record.recordedAt
                 }
             Schema.Charts
-                .batchInsertOnDuplicateKeyUpdate(listOf(chart), Schema.Charts.columns) { batch, chart ->
+                .batchInsertOnDuplicateKeyUpdate(listOf(header), Schema.Charts.columns) { batch, chart ->
                     batch[mid] = chart.mid
                     batch[mode] = chart.mode
                     batch[diff] = chart.diff

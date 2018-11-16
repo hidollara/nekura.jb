@@ -27,23 +27,22 @@ internal data class Level(
     val level = if (mainLevel <= 8) "$mainLevel" else "$mainLevel.$subLevel"
 }
 
-internal open class Chart(
-    val mid: MusicId, val mode: Mode, val diff: Difficulty, val level: Level?
-) {
-    val rankingPage = "${mode.rankingPage}?mid=$mid&seq=${diff.seq}"
-    fun rankingPageWithPage(page: Int) = "$rankingPage&page=$page"
-
-    override fun toString() = "Chart(mid=$mid, mode=$mode, diff=$diff)"
-}
+internal data class Chart(
+    val mid: MusicId, val diff: Difficulty, val level: Level?
+)
 
 internal enum class Mode(val rankingPage: String) {
     NORMAL("https://p.eagate.573.jp/game/jubeat/festo/ranking/best_score.html"),
     HARD("https://p.eagate.573.jp/game/jubeat/festo/ranking/best_score_hard.html")
 }
 
-internal class RecordHeader(
-    mid: MusicId, mode: Mode, diff: Difficulty, val lastUpdatedAt: DateTime
-) : Chart(mid, mode, diff, /* TODO */ null) {
+internal data class RecordHeader(
+    val mid: MusicId, val diff: Difficulty, val mode: Mode, val lastUpdatedAt: DateTime
+) {
+    val sourceUrl = "${mode.rankingPage}?mid=$mid&seq=${diff.seq}"
+
+    fun rankingPage(page: Int) = "$sourceUrl&page=$page"
+
     fun needUpdate(intervalMinutes: Int) =
         lastUpdatedAt.isBefore(DateTime.now().minusMinutes(intervalMinutes))
 }

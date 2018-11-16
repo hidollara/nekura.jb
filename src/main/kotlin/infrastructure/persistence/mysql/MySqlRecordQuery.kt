@@ -6,7 +6,10 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 
-internal class MySqlRecordQuery(private val db: Database) : RecordQuery {
+internal class MySqlRecordQuery(
+    private val db: Database,
+    private val recordHeaderQuery: RecordHeaderQuery
+) : RecordQuery {
     override fun recordsOf(header: RecordHeader) = transaction(db) {
         (Schema.Records innerJoin Schema.Players)
             .select {
@@ -39,7 +42,9 @@ internal class MySqlRecordQuery(private val db: Database) : RecordQuery {
     private fun Query.toRecords(): Records =
         map {
             Record(
-                Chart(it[Schema.Records.mid], it[Schema.Records.mode], it[Schema.Records.diff], /* TODO */ null),
+                recordHeaderQuery.rankingHeader(
+                    it[Schema.Records.mid], it[Schema.Records.mode], it[Schema.Records.diff]
+                ),
                 Player(it[Schema.Players.rivalId], it[Schema.Players.name]),
                 it[Schema.Records.bestScore], it[Schema.Records.recordedAt]
             )

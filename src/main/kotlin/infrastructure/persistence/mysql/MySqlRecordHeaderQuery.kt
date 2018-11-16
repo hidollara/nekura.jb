@@ -18,7 +18,7 @@ internal class MySqlRecordHeaderQuery(private val db: Database) : RecordHeaderQu
             .first()
             .let {
                 RecordHeader(
-                    it[Schema.Charts.mid], it[Schema.Charts.mode], it[Schema.Charts.diff],
+                    it[Schema.Charts.mid], it[Schema.Charts.diff], it[Schema.Charts.mode],
                     it[Schema.Charts.lastUpdatedAt]
                 )
             }
@@ -31,7 +31,7 @@ internal class MySqlRecordHeaderQuery(private val db: Database) : RecordHeaderQu
             .first()
             .let {
                 RecordHeader(
-                    it[Schema.Charts.mid], it[Schema.Charts.mode], it[Schema.Charts.diff],
+                    it[Schema.Charts.mid], it[Schema.Charts.diff], it[Schema.Charts.mode],
                     it[Schema.Charts.lastUpdatedAt]
                 )
             }

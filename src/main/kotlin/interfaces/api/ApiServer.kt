@@ -20,6 +20,7 @@ import io.ktor.routing.route
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 
+@KtorExperimentalLocationsAPI
 object ApiServer {
     private val server = embeddedServer(Netty, port = 8080) {
         install(CallLogging)
@@ -54,16 +55,20 @@ object ApiServer {
     fun start() = server.start(true)
 }
 
+@KtorExperimentalLocationsAPI
 @Location("/musics") internal class Musics {
     @Location("/{mid}") internal data class Music(val mid: MusicId)
 }
 
+@KtorExperimentalLocationsAPI
 @Location("/rankers") internal class Rankers {
     @Location("/{rivalId}") internal data class Ranker(val rivalId: RivalId)
 }
 
+@KtorExperimentalLocationsAPI
 @Location("/rankings")
 internal data class Ranking(val mid: MusicId, val mode: Mode, val diff: Difficulty)
 
+@KtorExperimentalLocationsAPI
 @Location("/records")
 internal data class Record(val range: Int = 7)

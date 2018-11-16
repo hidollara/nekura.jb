@@ -12,7 +12,7 @@ internal data class Player(
 }
 
 internal data class Record(
-    val chart: Chart, val player: Player,
+    val header: RecordHeader, val player: Player,
     val bestScore: Int, val recordedAt: DateTime
 )
 

@@ -22,10 +22,10 @@ internal class MySqlMusicCommand(private val db: Database) : MusicCommand {
             Schema.Charts
                 .batchInsert(
                     musics.map { music ->
-                        Mode.values().map { mode ->
-                            Difficulty.values().map { diff ->
+                        Difficulty.values().map { diff ->
+                            Mode.values().map { mode ->
                                 RecordHeader(
-                                    music.mid, mode, diff, DateTime.parse("1970-01-01")
+                                    music.mid, diff, mode, DateTime.parse("1970-01-01")
                                 )
                             }
                         }.flatten()

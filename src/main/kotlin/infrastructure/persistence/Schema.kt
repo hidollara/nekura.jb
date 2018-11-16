@@ -12,7 +12,7 @@ internal object Schema {
     object Musics : Table() {
         val mid = integer("mid").primaryKey()
         val title = varchar("title", 64)
-        val order = integer("order").uniqueIndex()
+        val order = integer("order")
     }
 
     object Players : Table() {
