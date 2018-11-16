@@ -42,7 +42,7 @@ internal class MySqlRecordQuery(
     private fun Query.toRecords(): Records =
         map {
             Record(
-                recordHeaderQuery.rankingHeader(
+                recordHeaderQuery.find(
                     it[Schema.Records.mid], it[Schema.Records.mode], it[Schema.Records.diff]
                 ),
                 Player(it[Schema.Players.rivalId], it[Schema.Players.name]),

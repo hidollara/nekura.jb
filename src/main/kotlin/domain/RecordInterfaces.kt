@@ -11,8 +11,8 @@ internal interface RankingCommand {
 }
 
 internal interface RecordHeaderQuery {
-    fun rankingHeader(mid: MusicId, mode: Mode, diff: Difficulty): RecordHeader
-    fun earliestUpdatedRanking(): RecordHeader
+    fun find(mid: MusicId, mode: Mode, diff: Difficulty): RecordHeader
+    fun findEarliestUpdated(): RecordHeader
 }
 
 internal interface RecordQuery {

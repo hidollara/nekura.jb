@@ -8,7 +8,7 @@ internal class RankingService(
     private val manager: RankingUpdateManager
 ) {
     fun ranking(mid: MusicId, mode: Mode, diff: Difficulty): Ranking =
-        headerQuery.rankingHeader(mid, mode, diff).let { header ->
+        headerQuery.find(mid, mode, diff).let { header ->
             manager.updateIfNeed(header)
             Ranking(header, recordQuery.recordsOf(header))
         }
