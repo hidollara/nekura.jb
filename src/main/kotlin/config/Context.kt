@@ -20,7 +20,8 @@ internal object Context {
     private val recordQuery = MySqlRecordQuery(db, recordHeaderQuery)
     private val rankingUpdateManager = RankingUpdateManager(rankingCommand, recordHeaderQuery, rankingFetcher, 30)
 
-    val rankingAutoUpdateService = RankingAutoUpdateService(rankingCommand, rankingFetcher, rankingUpdateManager)
+    val rankingAutoUpdateService =
+        RankingAutoUpdateService(rankingCommand, rankingFetcher, rankingUpdateManager, 60000)
     val musicService = MusicService(musicQuery)
     val rankingService = RankingService(recordHeaderQuery, recordQuery, rankingUpdateManager)
     val rankerService = RankerService(recordQuery)
