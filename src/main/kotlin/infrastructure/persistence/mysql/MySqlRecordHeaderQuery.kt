@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 internal class MySqlRecordHeaderQuery(private val db: Database) : RecordHeaderQuery {
     override fun find(
-        mid: MusicId, mode: Mode, diff: Difficulty
+        mid: MusicId, diff: Difficulty, mode: Mode
     ): RecordHeader = transaction(db) {
         Schema.Charts
             .select {

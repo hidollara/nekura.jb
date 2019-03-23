@@ -35,15 +35,12 @@ object ApiServer {
         install(Routing) {
             route("/api") {
                 get<Musics> { call.respond(Context.musicService.all()) }
-                get<Musics.Music> { music ->
-                    call.respond(Context.musicService.detail(music.mid))
-                }
                 get<Rankers> { call.respond(Context.rankerService.all()) }
                 get<Rankers.Ranker> { ranker ->
                     call.respond(Context.rankerService.records(ranker.rivalId))
                 }
                 get<Ranking> { ranking ->
-                    call.respond(Context.rankingService.ranking(ranking.mid, ranking.mode, ranking.diff))
+                    call.respond(Context.rankingService.ranking(ranking.mid, ranking.diff, ranking.mode))
                 }
                 get<Record> { record ->
                     call.respond(Context.recordService.latestRecords(record.range))
@@ -56,9 +53,7 @@ object ApiServer {
 }
 
 @KtorExperimentalLocationsAPI
-@Location("/musics") internal class Musics {
-    @Location("/{mid}") internal data class Music(val mid: MusicId)
-}
+@Location("/musics") internal class Musics
 
 @KtorExperimentalLocationsAPI
 @Location("/rankers") internal class Rankers {

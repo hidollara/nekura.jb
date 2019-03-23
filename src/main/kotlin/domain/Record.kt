@@ -8,8 +8,10 @@ internal data class Player(
     val rivalId: RivalId,
     val name: String
 ) {
-    val playdataPage = "https://p.eagate.573.jp/game/jubeat/festo/playdata/index_other.html?rival_id=$rivalId"
+    val playdataUrl = "https://p.eagate.573.jp/game/jubeat/festo/playdata/index_other.html?rival_id=$rivalId"
 }
+
+internal typealias Players = List<Player>
 
 internal data class Record(
     val header: RecordHeader, val player: Player,

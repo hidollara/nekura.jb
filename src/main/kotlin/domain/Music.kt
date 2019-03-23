@@ -15,22 +15,6 @@ internal enum class Difficulty(val seq: Int) {
     BASIC(0), ADVANCED(1), EXTREME(2)
 }
 
-internal data class Level(
-    val mainLevel: Int,
-    val subLevel: Int = 0
-) {
-    init {
-        if (mainLevel !in (1..10)) throw IllegalArgumentException()
-        if (subLevel !in (1..10)) throw IllegalArgumentException()
-        if (mainLevel in (1..8) && subLevel != 0) throw IllegalArgumentException()
-    }
-    val level = if (mainLevel <= 8) "$mainLevel" else "$mainLevel.$subLevel"
-}
-
-internal data class Chart(
-    val mid: MusicId, val diff: Difficulty, val level: Level?
-)
-
 internal enum class Mode(val rankingPage: String) {
     NORMAL("https://p.eagate.573.jp/game/jubeat/festo/ranking/best_score.html"),
     HARD("https://p.eagate.573.jp/game/jubeat/festo/ranking/best_score_hard.html")

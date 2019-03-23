@@ -3,13 +3,13 @@ package application
 import domain.*
 
 internal class RankingService(
-    private val headerQuery: RecordHeaderQuery,
+    private val recordHeaderQuery: RecordHeaderQuery,
     private val recordQuery: RecordQuery,
-    private val manager: RankingUpdateManager
+    private val rankingUpdateManager: RankingUpdateManager
 ) {
-    fun ranking(mid: MusicId, mode: Mode, diff: Difficulty): Ranking =
-        headerQuery.find(mid, mode, diff).let { header ->
-            manager.updateIfNeed(header)
-            Ranking(header, recordQuery.recordsOf(header))
+    fun ranking(mid: MusicId, diff: Difficulty, mode: Mode): Ranking =
+        recordHeaderQuery.find(mid, diff, mode).let { header ->
+            rankingUpdateManager.updateIfNeed(header)
+            recordQuery.recordsOf(header)
         }
 }

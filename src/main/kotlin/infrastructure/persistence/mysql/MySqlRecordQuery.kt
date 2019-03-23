@@ -10,7 +10,7 @@ internal class MySqlRecordQuery(
     private val db: Database,
     private val recordHeaderQuery: RecordHeaderQuery
 ) : RecordQuery {
-    override fun recordsOf(header: RecordHeader) = transaction(db) {
+    override fun recordsOf(header: RecordHeader): Ranking = transaction(db) {
         (Schema.Records innerJoin Schema.Players)
             .select {
                 (Schema.Records.mid eq header.mid) and
@@ -19,7 +19,7 @@ internal class MySqlRecordQuery(
             }
             .orderBy(Schema.Records.bestScore to false, Schema.Records.recordedAt to false)
             .limit(100)
-            .toRecords()
+            .let { Ranking(header, it.toRecords())}
     }
 
     override fun recordsOf(rivalId: RivalId) = transaction(db) {
@@ -43,7 +43,7 @@ internal class MySqlRecordQuery(
         map {
             Record(
                 recordHeaderQuery.find(
-                    it[Schema.Records.mid], it[Schema.Records.mode], it[Schema.Records.diff]
+                    it[Schema.Records.mid], it[Schema.Records.diff], it[Schema.Records.mode]
                 ),
                 Player(it[Schema.Players.rivalId], it[Schema.Players.name]),
                 it[Schema.Records.bestScore], it[Schema.Records.recordedAt]

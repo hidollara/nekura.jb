@@ -8,12 +8,10 @@ import kotlin.concurrent.timer
 internal class RankingAutoUpdateService(
     private val rankingCommand: RankingCommand,
     private val rankingFetcher: RankingFetcher,
-    private val manager: RankingUpdateManager,
+    private val rankingUpdateManager: RankingUpdateManager,
     private val autoUpdateInterval: Long
 ) {
-    private fun run() {
-        manager.pick().let { rankingCommand.pull(rankingFetcher, it) }
-    }
+    private fun run() = rankingUpdateManager.pick().let { rankingCommand.pull(rankingFetcher, it) }
 
     fun start() {
         timer(name = "Nekura.jb - Ranking Auto Updater", period = autoUpdateInterval) {
