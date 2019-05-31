@@ -9,7 +9,7 @@ import infrastructure.persistence.mysql.*
 import org.jetbrains.exposed.sql.Database
 
 internal object Context {
-    private val db = Database.connect("jdbc:mysql://localhost/nekura_jb", "com.mysql.jdbc.Driver", "root")
+    private val db = Database.connect("jdbc:mysql://localhost/nekura_jb", "com.mysql.cj.jdbc.Driver", "root")
 
     private val musicFetcher = OfficialPageMusicFetcher
     private val musicCommand = MySqlMusicCommand(db)
