@@ -32,3 +32,13 @@ compileTestKotlin {
 }
 
 mainClassName = 'MainKt'
+
+task createDatabase(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'DatabaseCreatorKt'
+}
+
+task dropDatabase(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'DatabaseDropperKt'
+}
