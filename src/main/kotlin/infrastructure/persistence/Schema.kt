@@ -24,6 +24,7 @@ internal object Schema {
         val mid = (integer("mid") references Musics.mid).primaryKey(0)
         val mode = enumeration("mode", Mode::class).primaryKey(1)
         val diff = enumeration("diff", Difficulty::class).primaryKey(2)
+        val level = decimal("level", 3, 1).nullable()
         val lastUpdatedAt = datetime("last_updated_at")
     }
 

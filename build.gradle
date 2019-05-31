@@ -30,3 +30,5 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "12"
 }
+
+mainClassName = 'MainKt'

@@ -1,6 +1,7 @@
 package domain
 
 import org.joda.time.DateTime
+import java.math.BigDecimal
 
 internal typealias MusicId = Int
 
@@ -16,20 +17,21 @@ internal enum class Difficulty(val seq: Int) {
 }
 
 internal data class Level(
-    val mainLevel: Int,
-    val subLevel: Int = 0
+    val level: BigDecimal
 ) {
+    val generalLevel = level.toInt()
+
     init {
-        if (mainLevel !in (1..10)) throw IllegalArgumentException()
-        if (subLevel !in (1..10)) throw IllegalArgumentException()
-        if (mainLevel in (1..8) && subLevel != 0) throw IllegalArgumentException()
+        if (generalLevel !in (1..10)) throw IllegalArgumentException()
+        if (generalLevel in (1..8) && level.scale() != 0) throw IllegalArgumentException()
+        if (generalLevel in (9..10) && level.scale() != 1) throw IllegalArgumentException()
     }
-    val level = if (mainLevel <= 8) "$mainLevel" else "$mainLevel.$subLevel"
 }
 
 internal open class Chart(
-    val mid: MusicId, val mode: Mode, val diff: Difficulty, val level: Level?
+    val mid: MusicId, val mode: Mode, val diff: Difficulty, level: BigDecimal?
 ) {
+    val level = level?.let { Level(it) }
     val rankingPage = "${mode.rankingPage}?mid=$mid&seq=${diff.seq}"
     fun rankingPageWithPage(page: Int) = "$rankingPage&page=$page"
 
@@ -42,8 +44,8 @@ internal enum class Mode(val rankingPage: String) {
 }
 
 internal class RecordHeader(
-    mid: MusicId, mode: Mode, diff: Difficulty, val lastUpdatedAt: DateTime
-) : Chart(mid, mode, diff, /* TODO */ null) {
+    mid: MusicId, mode: Mode, diff: Difficulty, level: BigDecimal?, val lastUpdatedAt: DateTime
+) : Chart(mid, mode, diff, level) {
     fun needUpdate(intervalMinutes: Int) =
         lastUpdatedAt.isBefore(DateTime.now().minusMinutes(intervalMinutes))
 }

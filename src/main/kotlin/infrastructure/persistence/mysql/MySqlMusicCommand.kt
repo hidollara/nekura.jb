@@ -25,7 +25,7 @@ internal class MySqlMusicCommand(private val db: Database) : MusicCommand {
                         Mode.values().map { mode ->
                             Difficulty.values().map { diff ->
                                 RecordHeader(
-                                    music.mid, mode, diff, DateTime.parse("1970-01-01")
+                                    music.mid, mode, diff, null, DateTime.parse("1970-01-01")
                                 )
                             }
                         }.flatten()
