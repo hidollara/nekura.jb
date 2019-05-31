@@ -26,10 +26,12 @@ internal object Context {
     val rankerService = RankerService(recordQuery)
     val recordService = RecordService(recordQuery)
 
-    internal fun initialize() {
+    internal fun dropDatabase() {
         Schema.drop(db)
-        Schema.create(db)
+    }
 
+    internal fun createDatabase() {
+        Schema.create(db)
         musicCommand.pull(musicFetcher)
     }
 }
