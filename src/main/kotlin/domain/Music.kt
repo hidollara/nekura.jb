@@ -29,13 +29,9 @@ internal data class Level(
 }
 
 internal open class Chart(
-    val mid: MusicId, val mode: Mode, val diff: Difficulty, level: BigDecimal?
+    val mid: MusicId, val diff: Difficulty, level: BigDecimal?
 ) {
     val level = level?.let { Level(it) }
-    val rankingPage = "${mode.rankingPage}?mid=$mid&seq=${diff.seq}"
-    fun rankingPageWithPage(page: Int) = "$rankingPage&page=$page"
-
-    override fun toString() = "Chart(mid=$mid, mode=$mode, diff=$diff)"
 }
 
 internal enum class Mode(val rankingPage: String) {
@@ -44,8 +40,13 @@ internal enum class Mode(val rankingPage: String) {
 }
 
 internal class RecordHeader(
-    mid: MusicId, mode: Mode, diff: Difficulty, level: BigDecimal?, val lastUpdatedAt: DateTime
-) : Chart(mid, mode, diff, level) {
+    mid: MusicId, diff: Difficulty, level: BigDecimal?,
+    val mode: Mode, val lastUpdatedAt: DateTime
+) : Chart(mid, diff, level) {
+    val sourceUrl = "${mode.rankingPage}?mid=$mid&seq=${diff.seq}"
+
+    fun rankingPage(page: Int) = "$sourceUrl&page=$page"
+
     fun needUpdate(intervalMinutes: Int) =
         lastUpdatedAt.isBefore(DateTime.now().minusMinutes(intervalMinutes))
 }

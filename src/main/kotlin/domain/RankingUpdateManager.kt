@@ -6,9 +6,9 @@ internal class RankingUpdateManager(
     private val rankingFetcher: RankingFetcher,
     private val intervalMinutes: Int
 ) {
-    fun pick(): Chart = recordHeaderQuery.earliestUpdatedRanking()
+    fun pick(): RecordHeader = recordHeaderQuery.findEarliestUpdated()
 
-    fun updateIfNeed(chart: RecordHeader) =
-        chart.takeIf { it.needUpdate(intervalMinutes) }
-            ?.let { rankingCommand.pull(rankingFetcher, chart) }
+    fun updateIfNeed(header: RecordHeader) =
+        header.takeIf { it.needUpdate(intervalMinutes) }
+            ?.let { rankingCommand.pull(rankingFetcher, it) }
 }

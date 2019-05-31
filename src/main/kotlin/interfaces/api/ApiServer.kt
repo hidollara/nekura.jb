@@ -20,6 +20,7 @@ import io.ktor.routing.route
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 
+@KtorExperimentalLocationsAPI
 object ApiServer {
     private val server = embeddedServer(Netty, port = 8080) {
         install(CallLogging)
@@ -34,15 +35,12 @@ object ApiServer {
         install(Routing) {
             route("/api") {
                 get<Musics> { call.respond(Context.musicService.all()) }
-                get<Musics.Music> { music ->
-                    call.respond(Context.musicService.detail(music.mid))
-                }
                 get<Rankers> { call.respond(Context.rankerService.all()) }
                 get<Rankers.Ranker> { ranker ->
                     call.respond(Context.rankerService.records(ranker.rivalId))
                 }
                 get<Ranking> { ranking ->
-                    call.respond(Context.rankingService.ranking(ranking.mid, ranking.mode, ranking.diff))
+                    call.respond(Context.rankingService.ranking(ranking.mid, ranking.diff, ranking.mode))
                 }
                 get<Record> { record ->
                     call.respond(Context.recordService.latestRecords(record.range))
@@ -54,16 +52,18 @@ object ApiServer {
     fun start() = server.start(true)
 }
 
-@Location("/musics") internal class Musics {
-    @Location("/{mid}") internal data class Music(val mid: MusicId)
-}
+@KtorExperimentalLocationsAPI
+@Location("/musics") internal class Musics
 
+@KtorExperimentalLocationsAPI
 @Location("/rankers") internal class Rankers {
     @Location("/{rivalId}") internal data class Ranker(val rivalId: RivalId)
 }
 
+@KtorExperimentalLocationsAPI
 @Location("/rankings")
-internal data class Ranking(val mid: MusicId, val mode: Mode, val diff: Difficulty)
+internal data class Ranking(val mid: MusicId, val diff: Difficulty, val mode: Mode)
 
+@KtorExperimentalLocationsAPI
 @Location("/records")
 internal data class Record(val range: Int = 7)

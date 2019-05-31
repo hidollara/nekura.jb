@@ -6,8 +6,8 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 internal class MySqlRecordHeaderQuery(private val db: Database) : RecordHeaderQuery {
-    override fun rankingHeader(
-        mid: MusicId, mode: Mode, diff: Difficulty
+    override fun find(
+        mid: MusicId, diff: Difficulty, mode: Mode
     ): RecordHeader = transaction(db) {
         Schema.Charts
             .select {
@@ -18,21 +18,21 @@ internal class MySqlRecordHeaderQuery(private val db: Database) : RecordHeaderQu
             .first()
             .let {
                 RecordHeader(
-                    it[Schema.Charts.mid], it[Schema.Charts.mode], it[Schema.Charts.diff], it[Schema.Charts.level],
-                    it[Schema.Charts.lastUpdatedAt]
+                    it[Schema.Charts.mid], it[Schema.Charts.diff], it[Schema.Charts.level],
+                    it[Schema.Charts.mode], it[Schema.Charts.lastUpdatedAt]
                 )
             }
     }
 
-    override fun earliestUpdatedRanking(): RecordHeader = transaction(db) {
+    override fun findEarliestUpdated(): RecordHeader = transaction(db) {
         Schema.Charts
             .selectAll()
             .orderBy(Schema.Charts.lastUpdatedAt)
             .first()
             .let {
                 RecordHeader(
-                    it[Schema.Charts.mid], it[Schema.Charts.mode], it[Schema.Charts.diff], it[Schema.Charts.level],
-                    it[Schema.Charts.lastUpdatedAt]
+                    it[Schema.Charts.mid], it[Schema.Charts.diff], it[Schema.Charts.level],
+                    it[Schema.Charts.mode], it[Schema.Charts.lastUpdatedAt]
                 )
             }
     }
