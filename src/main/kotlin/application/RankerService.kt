@@ -1,15 +1,11 @@
 package application
 
-import domain.Player
-import domain.RankerQuery
-import domain.RecordQuery
-import domain.RivalId
+import domain.core.*
 
 internal class RankerService(
-    private val rankerQuery: RankerQuery,
-    private val recordQuery: RecordQuery
+    private val rankerQuerent: RankerQuerent
 ) {
-    fun all(): List<Player> = rankerQuery.all()
+    fun all() = rankerQuerent.all()
 
-    fun records(rivalId: RivalId) = recordQuery.recordsOf(rivalId)
+    fun records(rivalId: RivalId) = rankerQuerent.find(rivalId)
 }

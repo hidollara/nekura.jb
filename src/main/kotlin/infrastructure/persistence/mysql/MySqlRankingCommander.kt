@@ -1,13 +1,14 @@
 package infrastructure.persistence.mysql
 
-import domain.*
+import domain.core.*
 import infrastructure.persistence.Schema
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 
-internal class MySqlRankingCommand(private val db: Database) : RankingCommand {
-    override fun pull(fetcher: RankingFetcher, header: RecordHeader) {
+internal class MySqlRankingCommander(private val db: Database) : RankingCommander {
+    override fun save(ranking: Ranking) {
+        /*
         val records = fetcher.fetch(header)
         transaction(db) {
             Schema.Players
@@ -32,5 +33,6 @@ internal class MySqlRankingCommand(private val db: Database) : RankingCommand {
                     batch[lastUpdatedAt] = DateTime.now()
                 }
         }
+        */
     }
 }

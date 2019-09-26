@@ -1,19 +1,17 @@
 package application
 
-import domain.MusicCommand
-import domain.MusicFetcher
+import domain.core.*
 import kotlin.concurrent.timer
 
-
 internal class MusicAutoUpdateService(
-    private val musicCommand: MusicCommand,
     private val musicFetcher: MusicFetcher,
+    private val musicCommander: MusicCommander,
     private val autoUpdateInterval: Long
 ) {
-    private fun run() = musicCommand.pull(musicFetcher)
+    private fun run() = musicFetcher.fetchAll().let { musicCommander.save(it) }
 
     fun start() {
-        timer(name = "Nekura.jb - Ranking Auto Updater", period = autoUpdateInterval) {
+        timer(name = "Nekura.jb - Music Auto Update Service", period = autoUpdateInterval) {
             this@MusicAutoUpdateService.run()
         }
     }

@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.util.StdDateFormat
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import config.Context
-import domain.Difficulty
-import domain.Mode
-import domain.MusicId
-import domain.RivalId
+import domain.core.Difficulty
+import domain.core.Mode
+import domain.core.MusicId
+import domain.core.RivalId
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.CallLogging
@@ -39,12 +39,6 @@ object ApiServer {
                 get<Rankers.Ranker> { ranker ->
                     call.respond(Context.rankerService.records(ranker.rivalId))
                 }
-                get<Ranking> { ranking ->
-                    call.respond(Context.rankingService.ranking(ranking.mid, ranking.diff, ranking.mode))
-                }
-                get<Record> { record ->
-                    call.respond(Context.recordService.latestRecords(record.range))
-                }
             }
         }
     }
@@ -59,11 +53,3 @@ object ApiServer {
 @Location("/rankers") internal class Rankers {
     @Location("/{rivalId}") internal data class Ranker(val rivalId: RivalId)
 }
-
-@KtorExperimentalLocationsAPI
-@Location("/rankings")
-internal data class Ranking(val mid: MusicId, val diff: Difficulty, val mode: Mode)
-
-@KtorExperimentalLocationsAPI
-@Location("/records")
-internal data class Record(val range: Int = 7)
