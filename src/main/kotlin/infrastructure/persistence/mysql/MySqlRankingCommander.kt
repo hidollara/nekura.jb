@@ -8,31 +8,28 @@ import org.joda.time.DateTime
 
 internal class MySqlRankingCommander(private val db: Database) : RankingCommander {
     override fun save(ranking: Ranking) {
-        /*
-        val records = fetcher.fetch(header)
         transaction(db) {
             Schema.Players
-                .batchInsertOnDuplicateKeyUpdate(records.map { it.player }, Schema.Players.columns) { batch, player ->
-                    batch[rivalId] = player.rivalId
+                .batchInsertOnDuplicateKeyUpdate(ranking.records.map { it.player }, Schema.Players.columns) { batch, player ->
+                    batch[rivalId] = player.rivalId.rivalId
                     batch[name] = player.name
                 }
             Schema.Records
-                .batchInsertOnDuplicateKeyUpdate(records, Schema.Records.columns) { batch, record ->
-                    batch[mid] = record.header.mid
-                    batch[mode] = record.header.mode
-                    batch[diff] = record.header.diff
-                    batch[rivalId] = record.player.rivalId
-                    batch[bestScore] = record.bestScore
+                .batchInsertOnDuplicateKeyUpdate(ranking.records, Schema.Records.columns) { batch, record ->
+                    batch[mid] = record.rankingId.mid
+                    batch[mode] = record.rankingId.mode
+                    batch[diff] = record.rankingId.diff
+                    batch[rivalId] = record.player.rivalId.rivalId
+                    batch[score] = record.score
                     batch[recordedAt] = record.recordedAt
                 }
-            Schema.Charts
-                .batchInsertOnDuplicateKeyUpdate(listOf(header), Schema.Charts.columns) { batch, chart ->
-                    batch[mid] = chart.mid
-                    batch[mode] = chart.mode
-                    batch[diff] = chart.diff
+            Schema.RankingHeaders
+                .batchInsertOnDuplicateKeyUpdate(listOf(ranking), Schema.RankingHeaders.columns) { batch, ranking ->
+                    batch[mid] = ranking.id.mid
+                    batch[diff] = ranking.id.diff
+                    batch[mode] = ranking.id.mode
                     batch[lastUpdatedAt] = DateTime.now()
                 }
         }
-        */
     }
 }

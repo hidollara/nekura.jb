@@ -21,7 +21,6 @@ internal class MySqlMusicQuerent(private val db: Database) : MusicQuerent {
             .slice(
                 Schema.Musics.mid,
                 Schema.Musics.title,
-                Schema.Musics.order,
                 bscLv, advLv, extLv
             )
             .selectAll()

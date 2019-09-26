@@ -9,20 +9,20 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 internal class MySqlRankingQuerent(private val db: Database) : RankingQuerent {
     override fun findEarliestUpdated() = transaction(db) {
-        /*
-        Schema.Charts
+        Schema.RankingHeaders
             .selectAll()
-            .orderBy(Schema.Charts.lastUpdatedAt)
+            .orderBy(Schema.RankingHeaders.lastUpdatedAt)
             .first()
-        */
-        Ranking(
-            RankingId(
-                0,
-                Difficulty.BASIC,
-                Mode.NORMAL
-            ),
-            DateTime.now(),
-            listOf()
-        )
+            .let {
+                Ranking(
+                    RankingId(
+                        it[Schema.RankingHeaders.mid],
+                        it[Schema.RankingHeaders.diff],
+                        it[Schema.RankingHeaders.mode]
+                    ),
+                    it[Schema.RankingHeaders.lastUpdatedAt],
+                    listOf()
+                )
+            }
     }
 }

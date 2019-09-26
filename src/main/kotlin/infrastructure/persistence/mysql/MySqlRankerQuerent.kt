@@ -7,11 +7,18 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 internal class MySqlRankerQuerent(private val db: Database) : RankerQuerent {
     override fun all() = transaction(db) {
-        /*
-        (Schema.Players innerJoin Schema.Records)
+        Schema.Players
             .selectAll()
-        */
-        listOf<Ranker>()
+            .map { record ->
+                Ranker(
+                    RivalId(record[Schema.Players.rivalId]),
+                    Player(
+                        RivalId(record[Schema.Players.rivalId]),
+                        record[Schema.Players.name]
+                    ),
+                    mapOf()
+                )
+            }
     }
 
     override fun find(rivalId: RivalId) = transaction(db) {
