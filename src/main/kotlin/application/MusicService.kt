@@ -1,9 +1,9 @@
 package application
 
-import domain.*
+import domain.core.*
 
 internal class MusicService(
-    private val musicQuery: MusicQuery
+    private val musicQuerent: MusicQuerent
 ) {
-    fun all(): Musics = musicQuery.all()
+    fun all() = musicQuerent.all()
 }

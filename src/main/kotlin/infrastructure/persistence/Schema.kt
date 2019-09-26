@@ -1,7 +1,7 @@
 package infrastructure.persistence
 
-import domain.Difficulty
-import domain.Mode
+import domain.core.Difficulty
+import domain.core.Mode
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
 import org.jetbrains.exposed.sql.SchemaUtils.drop
@@ -15,17 +15,22 @@ internal object Schema {
         val order = integer("order")
     }
 
+    object Charts : Table() {
+        val mid = (integer("mid") references Musics.mid).primaryKey(0)
+        val diff = enumeration("diff", Difficulty::class).primaryKey(1)
+        val level = integer("level").nullable()
+    }
+
+    object RankingHeaders : Table() {
+        val mid = (integer("mid") references Musics.mid).primaryKey(0)
+        val diff = enumeration("diff", Difficulty::class).primaryKey(1)
+        val mode = enumeration("mode", Mode::class).primaryKey(2)
+        val lastUpdatedAt = datetime("last_updated_at")
+    }
+
     object Players : Table() {
         val rivalId = long("rival_id").primaryKey()
         val name = varchar("name", 8)
-    }
-
-    object Charts : Table() {
-        val mid = (integer("mid") references Musics.mid).primaryKey(0)
-        val mode = enumeration("mode", Mode::class).primaryKey(1)
-        val diff = enumeration("diff", Difficulty::class).primaryKey(2)
-        val level = decimal("level", 3, 1).nullable()
-        val lastUpdatedAt = datetime("last_updated_at")
     }
 
     object Records : Table() {
@@ -33,15 +38,15 @@ internal object Schema {
         val mode = enumeration("mode", Mode::class).primaryKey(1)
         val diff = enumeration("diff", Difficulty::class).primaryKey(2)
         val rivalId = (long("rival_id") references Players.rivalId).primaryKey(3)
+        val score = integer("score")
         val recordedAt = datetime("recorded_at")
-        val bestScore = integer("best_score")
     }
 
     fun drop(db: Database) = transaction(db) {
-        drop(Musics, Players, Charts, Records)
+        drop(Musics, Charts, RankingHeaders, Players, Records)
     }
 
     fun create(db: Database) = transaction(db) {
-        create(Musics, Players, Charts, Records)
+        create(Musics, Charts, RankingHeaders, Players, Records)
     }
 }

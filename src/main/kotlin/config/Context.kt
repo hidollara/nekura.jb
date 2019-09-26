@@ -3,8 +3,7 @@ package config
 import infrastructure.messaging.*
 import infrastructure.persistence.*
 import application.*
-import application.RankingService
-import domain.RankingUpdateManager
+import domain.service.RankingUpdateManager
 import infrastructure.persistence.mysql.*
 import org.jetbrains.exposed.sql.Database
 
@@ -12,26 +11,25 @@ internal object Context {
     private val db = Database.connect("jdbc:mysql://localhost/nekura_jb", "com.mysql.cj.jdbc.Driver", "root")
 
     private val musicFetcher = OfficialPageMusicFetcher
+    private val musicCommander = MySqlMusicCommander(db)
+    private val musicQuerent = MySqlMusicQuerent(db)
+
     private val rankingFetcher = OfficialPageRankingFetcher
+    private val rankingCommander = MySqlRankingCommander(db)
+    private val rankingQuerent = MySqlRankingQuerent(db)
 
-    private val musicCommand = MySqlMusicCommand(db)
-    private val musicQuery = MySqlMusicQuery(db)
-    private val rankingCommand = MySqlRankingCommand(db)
-    private val rankerQuery = MySqlRankerQuery(db)
-    private val recordHeaderQuery = MySqlRecordHeaderQuery(db)
-    private val recordQuery = MySqlRecordQuery(db, recordHeaderQuery)
+    private val rankerQuerent = MySqlRankerQuerent(db)
 
-    private val rankingUpdateManager = RankingUpdateManager(rankingCommand, recordHeaderQuery, rankingFetcher, 30)
+    private val rankingUpdateManager =
+        RankingUpdateManager(rankingFetcher, rankingCommander, 30)
 
     val musicAutoUpdateService =
-        MusicAutoUpdateService(musicCommand, musicFetcher, 86400000)
+        MusicAutoUpdateService(musicFetcher, musicCommander, 24 * 60 * 60 * 1000)
     val rankingAutoUpdateService =
-        RankingAutoUpdateService(rankingCommand, rankingFetcher, rankingUpdateManager, 60000)
+        RankingAutoUpdateService(rankingQuerent, rankingUpdateManager, 60 * 1000)
 
-    val musicService = MusicService(musicQuery)
-    val rankingService = RankingService(recordHeaderQuery, recordQuery, rankingUpdateManager)
-    val rankerService = RankerService(rankerQuery, recordQuery)
-    val recordService = RecordService(recordQuery)
+    val musicService = MusicService(musicQuerent)
+    val rankerService = RankerService(rankerQuerent)
 
     internal fun dropDatabase() {
         Schema.drop(db)
@@ -39,6 +37,6 @@ internal object Context {
 
     internal fun createDatabase() {
         Schema.create(db)
-        musicCommand.pull(musicFetcher)
+        musicFetcher.fetchAll().let { musicCommander.save(it) }
     }
 }
