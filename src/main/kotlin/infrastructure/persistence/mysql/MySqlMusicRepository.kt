@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 
-internal class MySqlMusicCommander(private val db: Database) : MusicCommander {
+internal class MySqlMusicRepository(private val db: Database) : MusicRepository {
     override fun save(musics: List<Music>) {
         transaction(db) {
             Schema.Musics
@@ -29,13 +29,7 @@ internal class MySqlMusicCommander(private val db: Database) : MusicCommander {
                 }
             Schema.RankingHeaders
                 .batchInsert(
-                    musics.map { music ->
-                        Difficulty.values().map { diff ->
-                            Mode.values().map { mode ->
-                                RankingId(music.mid, diff, mode)
-                            }
-                        }.flatten()
-                    }.flatten(),
+                    musics.map { it.getRankingIds() }.flatten(),
                     ignore = true
                 ) {
                     this[Schema.RankingHeaders.mid] = it.mid

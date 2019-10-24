@@ -51,5 +51,5 @@ object ApiServer {
 
 @KtorExperimentalLocationsAPI
 @Location("/rankers") internal class Rankers {
-    @Location("/{rivalId}") internal data class Ranker(val rivalId: RivalId)
+    @Location("/{rivalId}") internal data class Ranker(val rivalId: Long)
 }

@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 
-internal class MySqlRankingCommander(private val db: Database) : RankingCommander {
+internal class MySqlRankingRepository(private val db: Database) : RankingRepository {
     override fun save(ranking: Ranking) {
         transaction(db) {
             Schema.Players
