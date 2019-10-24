@@ -33,6 +33,11 @@ compileTestKotlin {
 
 mainClassName = 'MainKt'
 
+task updateMusics(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'MusicsUpdaterKt'
+}
+
 task createDatabase(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'DatabaseCreatorKt'

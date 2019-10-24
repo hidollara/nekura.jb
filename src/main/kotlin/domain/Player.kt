@@ -1,4 +1,4 @@
-package domain.core
+package domain
 
 internal data class RivalId(
     val rivalId: Long
@@ -10,8 +10,3 @@ internal data class Player(
     val rivalId: RivalId,
     val name: String
 )
-
-internal interface PlayerQuerent {
-    fun all(): List<Player>
-    fun find(rivalId: RivalId): Player
-}

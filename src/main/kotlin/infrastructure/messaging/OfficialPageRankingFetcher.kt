@@ -1,6 +1,6 @@
 package infrastructure.messaging
 
-import domain.core.*
+import domain.*
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.jsoup.Jsoup

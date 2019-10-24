@@ -1,6 +1,6 @@
 package infrastructure.messaging
 
-import domain.core.*
+import domain.*
 import org.jsoup.Jsoup
 
 internal object AdjustFestoMusicFetcher : MusicFetcher {
@@ -13,8 +13,10 @@ internal object AdjustFestoMusicFetcher : MusicFetcher {
                 tr.select("td").let { tds ->
                     buildMusic(
                         tds[0].attr("id").toInt(),
-                        tds[1].text(),
-                        null, null, null
+                        tds[1].ownText(),
+                        tds[2].select("div.lv").first().className().replace("lv b", "").toInt(),
+                        tds[5].select("div.lv").first().className().replace("lv a", "").toInt(),
+                        tds[8].select("div.lv").first().className().replace("lv e", "").toInt()
                     )
                 }
             }

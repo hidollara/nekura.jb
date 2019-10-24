@@ -1,6 +1,6 @@
 package infrastructure.messaging
 
-import domain.core.*
+import domain.*
 import org.jsoup.Jsoup
 
 internal object OfficialPageMusicFetcher : MusicFetcher {

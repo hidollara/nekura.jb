@@ -1,6 +1,6 @@
 package infrastructure.persistence.mysql
 
-import domain.core.*
+import domain.*
 import infrastructure.persistence.Schema
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -15,7 +15,7 @@ val extLv = Expression.build {
     Max(case().When(Schema.Charts.diff eq Difficulty.EXTREME, Schema.Charts.level).Else(intLiteral(0)), Schema.Charts.level.columnType)
 }
 
-internal class MySqlMusicQuerent(private val db: Database) : MusicQuerent {
+internal class MySqlMusicService(private val db: Database) : MusicService {
     override fun all() = transaction(db) {
         (Schema.Musics innerJoin Schema.Charts)
             .slice(

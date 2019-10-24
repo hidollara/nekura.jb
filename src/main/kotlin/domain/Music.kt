@@ -1,4 +1,4 @@
-package domain.core
+package domain
 
 internal typealias MusicId = Int
 
@@ -31,9 +31,4 @@ internal interface MusicFetcher {
 
 internal interface MusicRepository {
     fun save(musics: List<Music>)
-}
-
-internal interface MusicQuerent {
-    fun all(): List<Music>
-    fun find(mid: MusicId): Music
 }

@@ -1,4 +1,4 @@
-package domain.core
+package domain
 
 import org.joda.time.DateTime
 
@@ -40,8 +40,4 @@ internal interface RankingFetcher {
 
 internal interface RankingRepository {
     fun save(ranking: Ranking)
-}
-
-internal interface RankingQuerent {
-    fun findEarliestUpdated(): Ranking
 }

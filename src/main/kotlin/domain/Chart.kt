@@ -1,4 +1,4 @@
-package domain.core
+package domain
 
 internal enum class Difficulty(
     val seq: Int

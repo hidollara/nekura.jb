@@ -1,7 +1,7 @@
 package infrastructure.persistence
 
-import domain.core.Difficulty
-import domain.core.Mode
+import domain.Difficulty
+import domain.Mode
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
 import org.jetbrains.exposed.sql.SchemaUtils.drop

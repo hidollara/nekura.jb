@@ -1,6 +1,6 @@
 package infrastructure.persistence.mysql
 
-import domain.core.*
+import domain.*
 import infrastructure.persistence.Schema
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction

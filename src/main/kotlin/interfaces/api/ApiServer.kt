@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.util.StdDateFormat
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import config.Context
-import domain.core.Difficulty
-import domain.core.Mode
-import domain.core.MusicId
-import domain.core.RivalId
+import domain.Difficulty
+import domain.Mode
+import domain.MusicId
+import domain.RivalId
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.CallLogging
@@ -34,10 +34,10 @@ object ApiServer {
         }
         install(Routing) {
             route("/api") {
-                get<Musics> { call.respond(Context.musicService.all()) }
-                get<Rankers> { call.respond(Context.rankerService.all()) }
+                get<Musics> { call.respond(Context.musicApplicationService.all()) }
+                get<Rankers> { call.respond(Context.rankerApplicationService.all()) }
                 get<Rankers.Ranker> { ranker ->
-                    call.respond(Context.rankerService.records(ranker.rivalId))
+                    call.respond(Context.rankerApplicationService.records(ranker.rivalId))
                 }
             }
         }
