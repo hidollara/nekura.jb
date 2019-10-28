@@ -2,13 +2,13 @@ package application
 
 import domain.*
 
-internal class RankerApplicationService(
+internal class PlayerApplicationService(
     private val playerService: PlayerService
 ) {
     fun all() = playerService.all()
 
     fun records(rivalId: Long) =
-        playerService.find(RivalId(rivalId)).let { player ->
+        playerService.find(rivalId).let { player ->
             playerService.getRecords(player)
         }
 }

@@ -23,9 +23,9 @@ internal object OfficialPageRankingFetcher : RankingFetcher {
                                 Record(
                                     rankingId,
                                     Player(
-                                        RivalId(tds[1].child(0).attr("href").let { href ->
+                                        tds[1].child(0).attr("href").let { href ->
                                             """rival_id=(\d+)""".toRegex().find(href)!!.groupValues[1].toLong()
-                                        }),
+                                        },
                                         tds[1].child(0).text()
                                     ),
                                     tds[2].text().toInt(),

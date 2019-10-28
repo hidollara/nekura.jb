@@ -10,9 +10,8 @@ import org.jetbrains.exposed.sql.Database
 internal object Context {
     private val db = Database.connect("jdbc:mysql://localhost/nekura_jb", "com.mysql.cj.jdbc.Driver", "root")
 
-    private val musicFetcher = AdjustFestoMusicFetcher
+    private val musicFetcher = OfficialPageMusicFetcher
     private val musicRepository = MySqlMusicRepository(db)
-    private val musicService = MySqlMusicService(db)
 
     private val playerService = MySqlPlayerService(db)
 
@@ -23,8 +22,7 @@ internal object Context {
     val rankingAutoUpdateService =
         RankingAutoUpdateService(rankingFetcher, rankingRepository, rankingService, 30, 60 * 1000)
 
-    val musicApplicationService = MusicApplicationService(musicService)
-    val rankerApplicationService = RankerApplicationService(playerService)
+    val playerApplicationService = PlayerApplicationService(playerService)
 
     internal fun updateMusics() {
         musicFetcher.fetchAll().let { musicRepository.save(it) }

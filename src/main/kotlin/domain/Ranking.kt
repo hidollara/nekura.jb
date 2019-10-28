@@ -2,6 +2,12 @@ package domain
 
 import org.joda.time.DateTime
 
+internal enum class Difficulty(
+    val seq: Int
+) {
+    BASIC(0), ADVANCED(1), EXTREME(2)
+}
+
 internal enum class Mode(
     val rankingUrl: String
 ) {
@@ -10,11 +16,11 @@ internal enum class Mode(
 }
 
 internal data class RankingId(
-    val mid: MusicId,
+    val music: Music,
     val diff: Difficulty,
     val mode: Mode
 ) {
-    val sourceUrl = "${mode.rankingUrl}?mid=${mid}&seq=${diff.seq}"
+    val sourceUrl = "${mode.rankingUrl}?mid=${music.mid}&seq=${diff.seq}"
     fun sourceUrlWith(page: Int = 1) = "${sourceUrl}&page=${page}"
 }
 
@@ -40,4 +46,8 @@ internal interface RankingFetcher {
 
 internal interface RankingRepository {
     fun save(ranking: Ranking)
+}
+
+internal interface RankingService {
+    fun findEarliestUpdated(): Ranking
 }

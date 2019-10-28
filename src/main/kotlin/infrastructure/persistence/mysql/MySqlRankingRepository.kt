@@ -11,21 +11,21 @@ internal class MySqlRankingRepository(private val db: Database) : RankingReposit
         transaction(db) {
             Schema.Players
                 .batchInsertOnDuplicateKeyUpdate(ranking.records.map { it.player }, Schema.Players.columns) { batch, player ->
-                    batch[rivalId] = player.rivalId.rivalId
+                    batch[rivalId] = player.rivalId
                     batch[name] = player.name
                 }
             Schema.Records
                 .batchInsertOnDuplicateKeyUpdate(ranking.records, Schema.Records.columns) { batch, record ->
-                    batch[mid] = record.rankingId.mid
+                    batch[mid] = record.rankingId.music.mid
                     batch[mode] = record.rankingId.mode
                     batch[diff] = record.rankingId.diff
-                    batch[rivalId] = record.player.rivalId.rivalId
+                    batch[rivalId] = record.player.rivalId
                     batch[score] = record.score
                     batch[recordedAt] = record.recordedAt
                 }
             Schema.RankingHeaders
                 .batchInsertOnDuplicateKeyUpdate(listOf(ranking), Schema.RankingHeaders.columns) { batch, ranking ->
-                    batch[mid] = ranking.id.mid
+                    batch[mid] = ranking.id.music.mid
                     batch[diff] = ranking.id.diff
                     batch[mode] = ranking.id.mode
                     batch[lastUpdatedAt] = DateTime.now()

@@ -15,12 +15,6 @@ internal object Schema {
         val order = integer("order")
     }
 
-    object Charts : Table() {
-        val mid = (integer("mid") references Musics.mid).primaryKey(0)
-        val diff = enumeration("diff", Difficulty::class).primaryKey(1)
-        val level = integer("level").nullable()
-    }
-
     object RankingHeaders : Table() {
         val mid = (integer("mid") references Musics.mid).primaryKey(0)
         val diff = enumeration("diff", Difficulty::class).primaryKey(1)
@@ -43,10 +37,10 @@ internal object Schema {
     }
 
     fun drop(db: Database) = transaction(db) {
-        drop(Musics, Charts, RankingHeaders, Players, Records)
+        drop(Musics, RankingHeaders, Players, Records)
     }
 
     fun create(db: Database) = transaction(db) {
-        create(Musics, Charts, RankingHeaders, Players, Records)
+        create(Musics, RankingHeaders, Players, Records)
     }
 }

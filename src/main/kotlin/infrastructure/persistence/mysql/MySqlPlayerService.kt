@@ -11,7 +11,7 @@ internal class MySqlPlayerService(private val db: Database) : PlayerService {
             .selectAll()
             .map { record ->
                 Player(
-                    RivalId(record[Schema.Players.rivalId]),
+                    record[Schema.Players.rivalId],
                     record[Schema.Players.name]
                 )
             }
@@ -19,7 +19,7 @@ internal class MySqlPlayerService(private val db: Database) : PlayerService {
 
     override fun find(rivalId: RivalId) = transaction(db) {
         Schema.Players
-            .select { Schema.Players.rivalId eq rivalId.rivalId }
+            .select { Schema.Players.rivalId eq rivalId }
             .first()
             .let { record ->
                 Player(
@@ -30,13 +30,16 @@ internal class MySqlPlayerService(private val db: Database) : PlayerService {
     }
 
     override fun getRecords(player: Player) = transaction(db) {
-        Schema.Records
-            .select { Schema.Records.rivalId eq player.rivalId.rivalId }
+        (Schema.Records innerJoin Schema.Musics)
+            .select { Schema.Records.rivalId eq player.rivalId }
             .orderBy(Schema.Records.recordedAt to false)
             .map { record ->
                 Record(
                     RankingId(
-                        record[Schema.Records.mid],
+                        Music(
+                            record[Schema.Musics.mid],
+                            record[Schema.Musics.title]
+                        ),
                         record[Schema.Records.diff],
                         record[Schema.Records.mode]
                     ),

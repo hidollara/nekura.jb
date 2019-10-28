@@ -15,12 +15,11 @@ internal object OfficialPageMusicFetcher : MusicFetcher {
                 .flatten()
                 .map { tr ->
                     tr.select("td").let { tds ->
-                        buildMusic(
+                        Music(
                             tds[0].selectFirst("img").attr("src").let { src ->
                                 """id(\d+).gif""".toRegex().find(src)!!.groupValues[1].toInt()
                             },
-                            tds[1].text(),
-                            null, null, null
+                            tds[1].text()
                         )
                     }
                 }

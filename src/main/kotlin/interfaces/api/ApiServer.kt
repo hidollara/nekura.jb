@@ -12,6 +12,7 @@ import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
+import io.ktor.features.CORS
 import io.ktor.jackson.jackson
 import io.ktor.locations.*
 import io.ktor.response.respond
@@ -32,12 +33,14 @@ object ApiServer {
                 dateFormat = StdDateFormat()
             }
         }
+        install(CORS) {
+            host("localhost:8000")
+        }
         install(Routing) {
             route("/api") {
-                get<Musics> { call.respond(Context.musicApplicationService.all()) }
-                get<Rankers> { call.respond(Context.rankerApplicationService.all()) }
-                get<Rankers.Ranker> { ranker ->
-                    call.respond(Context.rankerApplicationService.records(ranker.rivalId))
+                get<Players> { call.respond(Context.playerApplicationService.all()) }
+                get<Players.Records> { player ->
+                    call.respond(Context.playerApplicationService.records(player.rivalId))
                 }
             }
         }
@@ -47,9 +50,6 @@ object ApiServer {
 }
 
 @KtorExperimentalLocationsAPI
-@Location("/musics") internal class Musics
-
-@KtorExperimentalLocationsAPI
-@Location("/rankers") internal class Rankers {
-    @Location("/{rivalId}") internal data class Ranker(val rivalId: Long)
+@Location("/players") internal class Players {
+    @Location("/{rivalId}/records") internal data class Records(val rivalId: Long)
 }

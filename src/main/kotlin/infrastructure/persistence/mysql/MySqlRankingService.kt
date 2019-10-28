@@ -8,14 +8,17 @@ import org.joda.time.DateTime
 
 internal class MySqlRankingService(private val db: Database) : RankingService {
     override fun findEarliestUpdated() = transaction(db) {
-        Schema.RankingHeaders
+        (Schema.RankingHeaders innerJoin Schema.Musics)
             .selectAll()
             .orderBy(Schema.RankingHeaders.lastUpdatedAt)
             .first()
             .let {
                 Ranking(
                     RankingId(
-                        it[Schema.RankingHeaders.mid],
+                        Music(
+                            it[Schema.Musics.mid],
+                            it[Schema.Musics.title]
+                        ),
                         it[Schema.RankingHeaders.diff],
                         it[Schema.RankingHeaders.mode]
                     ),
