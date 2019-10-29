@@ -6,9 +6,9 @@ import org.joda.time.format.DateTimeFormat
 import org.jsoup.Jsoup
 
 internal object OfficialPageRankingFetcher : RankingFetcher {
-    override fun fetch(rankingId: RankingId) =
+    override fun fetch(rankingId: RankingId, fully: Boolean) =
         Jsoup.connect(rankingId.sourceUrl).get().select(".page_navi .num").size.let { numberOfPages ->
-            (1..numberOfPages)
+            (1..(if (fully) numberOfPages else 1))
                 .map { page ->
                     Jsoup.connect(rankingId.sourceUrlWith(page)).get()
                         .selectFirst("table.rank_player").select("tr").apply { removeAt(0) }

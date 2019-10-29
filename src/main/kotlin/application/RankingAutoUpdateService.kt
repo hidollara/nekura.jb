@@ -12,7 +12,7 @@ internal class RankingAutoUpdateService(
 ) {
     private fun run() = rankingService.findEarliestUpdated()
         .takeIf { it.needUpdate(intervalMinutes) }
-        ?.let { rankingFetcher.fetch(it.id) }
+        ?.let { rankingFetcher.fetch(it.id, it.needFullyUpdate()) }
         ?.let { rankingRepository.save(it) }
 
     fun start() {

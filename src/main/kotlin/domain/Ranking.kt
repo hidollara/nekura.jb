@@ -38,10 +38,12 @@ internal class Ranking(
 ) {
     fun needUpdate(intervalMinutes: Int) =
         lastUpdatedAt.isBefore(DateTime.now().minusMinutes(intervalMinutes))
+
+    fun needFullyUpdate() = records.count { it.score == 1000000 } < 100
 }
 
 internal interface RankingFetcher {
-    fun fetch(rankingId: RankingId): Ranking
+    fun fetch(rankingId: RankingId, fully: Boolean = true): Ranking
 }
 
 internal interface RankingRepository {
