@@ -13,8 +13,6 @@ internal object Context {
     private val musicFetcher = OfficialPageMusicFetcher
     private val musicRepository = MySqlMusicRepository(db)
 
-    private val playerService = MySqlPlayerService(db)
-
     private val rankingFetcher = OfficialPageRankingFetcher
     private val rankingRepository = MySqlRankingRepository(db)
     private val rankingService = MySqlRankingService(db)
@@ -23,8 +21,6 @@ internal object Context {
 
     val rankingAutoUpdateService =
         RankingAutoUpdateService(rankingFetcher, rankingRepository, rankingService, 30, 60 * 1000)
-
-    val playerApplicationService = PlayerApplicationService(playerService)
 
     val recordApplicationService = RecordApplicationService(recordService)
 
