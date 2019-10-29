@@ -4,14 +4,15 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.util.StdDateFormat
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import config.Context
-import domain.core.Difficulty
-import domain.core.Mode
-import domain.core.MusicId
-import domain.core.RivalId
+import domain.Difficulty
+import domain.Mode
+import domain.MusicId
+import domain.RivalId
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
+import io.ktor.features.CORS
 import io.ktor.jackson.jackson
 import io.ktor.locations.*
 import io.ktor.response.respond
@@ -32,12 +33,14 @@ object ApiServer {
                 dateFormat = StdDateFormat()
             }
         }
+        install(CORS) {
+            host("localhost:8000")
+        }
         install(Routing) {
             route("/api") {
-                get<Musics> { call.respond(Context.musicService.all()) }
-                get<Rankers> { call.respond(Context.rankerService.all()) }
-                get<Rankers.Ranker> { ranker ->
-                    call.respond(Context.rankerService.records(ranker.rivalId))
+                get<Players> { call.respond(Context.playerApplicationService.all()) }
+                get<Players.Records> { player ->
+                    call.respond(Context.playerApplicationService.records(player.rivalId))
                 }
             }
         }
@@ -47,9 +50,6 @@ object ApiServer {
 }
 
 @KtorExperimentalLocationsAPI
-@Location("/musics") internal class Musics
-
-@KtorExperimentalLocationsAPI
-@Location("/rankers") internal class Rankers {
-    @Location("/{rivalId}") internal data class Ranker(val rivalId: RivalId)
+@Location("/players") internal class Players {
+    @Location("/{rivalId}/records") internal data class Records(val rivalId: Long)
 }

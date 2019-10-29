@@ -4,7 +4,6 @@ import io.ktor.locations.KtorExperimentalLocationsAPI
 
 @KtorExperimentalLocationsAPI
 fun main(args: Array<String>) {
-    // Context.musicAutoUpdateService.start()
     Context.rankingAutoUpdateService.start()
     ApiServer.start()
 }

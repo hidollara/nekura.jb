@@ -1,9 +1,9 @@
 package config
 
+import domain.*
+import application.*
 import infrastructure.messaging.*
 import infrastructure.persistence.*
-import application.*
-import domain.service.RankingUpdateManager
 import infrastructure.persistence.mysql.*
 import org.jetbrains.exposed.sql.Database
 
@@ -11,25 +11,22 @@ internal object Context {
     private val db = Database.connect("jdbc:mysql://localhost/nekura_jb", "com.mysql.cj.jdbc.Driver", "root")
 
     private val musicFetcher = OfficialPageMusicFetcher
-    private val musicCommander = MySqlMusicCommander(db)
-    private val musicQuerent = MySqlMusicQuerent(db)
+    private val musicRepository = MySqlMusicRepository(db)
+
+    private val playerService = MySqlPlayerService(db)
 
     private val rankingFetcher = OfficialPageRankingFetcher
-    private val rankingCommander = MySqlRankingCommander(db)
-    private val rankingQuerent = MySqlRankingQuerent(db)
+    private val rankingRepository = MySqlRankingRepository(db)
+    private val rankingService = MySqlRankingService(db)
 
-    private val rankerQuerent = MySqlRankerQuerent(db)
-
-    private val rankingUpdateManager =
-        RankingUpdateManager(rankingFetcher, rankingCommander, 30)
-
-    val musicAutoUpdateService =
-        MusicAutoUpdateService(musicFetcher, musicCommander, 24 * 60 * 60 * 1000)
     val rankingAutoUpdateService =
-        RankingAutoUpdateService(rankingQuerent, rankingUpdateManager, 60 * 1000)
+        RankingAutoUpdateService(rankingFetcher, rankingRepository, rankingService, 30, 60 * 1000)
 
-    val musicService = MusicService(musicQuerent)
-    val rankerService = RankerService(rankerQuerent)
+    val playerApplicationService = PlayerApplicationService(playerService)
+
+    internal fun updateMusics() {
+        musicFetcher.fetchAll().let { musicRepository.save(it) }
+    }
 
     internal fun dropDatabase() {
         Schema.drop(db)
@@ -37,6 +34,7 @@ internal object Context {
 
     internal fun createDatabase() {
         Schema.create(db)
-        musicFetcher.fetchAll().let { musicCommander.save(it) }
+        updateMusics()
     }
+
 }

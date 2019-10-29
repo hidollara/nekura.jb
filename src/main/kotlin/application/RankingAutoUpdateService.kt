@@ -1,16 +1,19 @@
 package application
 
-import domain.core.*
-import domain.service.*
+import domain.*
 import kotlin.concurrent.timer
 
 internal class RankingAutoUpdateService(
-    private val rankingQuerent: RankingQuerent,
-    private val rankingUpdateManager: RankingUpdateManager,
+    private val rankingFetcher: RankingFetcher,
+    private val rankingRepository: RankingRepository,
+    private val rankingService: RankingService,
+    private val intervalMinutes: Int,
     private val autoUpdateInterval: Long
 ) {
-    private fun run() = rankingQuerent.findEarliestUpdated()
-        .let { rankingUpdateManager.updateIfNeed(it) }
+    private fun run() = rankingService.findEarliestUpdated()
+        .takeIf { it.needUpdate(intervalMinutes) }
+        ?.let { rankingFetcher.fetch(it.id) }
+        ?.let { rankingRepository.save(it) }
 
     fun start() {
         timer(name = "Nekura.jb - Ranking Auto Update Service", period = autoUpdateInterval) {
