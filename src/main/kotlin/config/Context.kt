@@ -19,10 +19,14 @@ internal object Context {
     private val rankingRepository = MySqlRankingRepository(db)
     private val rankingService = MySqlRankingService(db)
 
+    private val recordService = MySqlRecordService(db)
+
     val rankingAutoUpdateService =
         RankingAutoUpdateService(rankingFetcher, rankingRepository, rankingService, 30, 60 * 1000)
 
     val playerApplicationService = PlayerApplicationService(playerService)
+
+    val recordApplicationService = RecordApplicationService(recordService)
 
     internal fun updateMusics() {
         musicFetcher.fetchAll().let { musicRepository.save(it) }

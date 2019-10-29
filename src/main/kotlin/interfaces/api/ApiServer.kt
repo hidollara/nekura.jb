@@ -38,9 +38,22 @@ object ApiServer {
         }
         install(Routing) {
             route("/api") {
-                get<Players> { call.respond(Context.playerApplicationService.all()) }
+                get<Players> {
+                    call.respond(Context.playerApplicationService.all())
+                }
                 get<Players.Records> { player ->
                     call.respond(Context.playerApplicationService.records(player.rivalId))
+                }
+                get<Records> { conditions ->
+                    call.respond(
+                        Context.recordApplicationService.all(
+                            conditions.musicTitles,
+                            conditions.diffs,
+                            conditions.modes,
+                            conditions.playerNames,
+                            conditions.rivalIds
+                        )
+                    )
                 }
             }
         }
@@ -53,3 +66,12 @@ object ApiServer {
 @Location("/players") internal class Players {
     @Location("/{rivalId}/records") internal data class Records(val rivalId: Long)
 }
+
+@KtorExperimentalLocationsAPI
+@Location("/records") internal class Records(
+    val musicTitles: List<String> = listOf(),
+    val diffs: List<String> = listOf(),
+    val modes: List<String> = listOf(),
+    val playerNames: List<String> = listOf(),
+    val rivalIds: List<Long> = listOf()
+)
