@@ -17,7 +17,11 @@ internal class RankingAutoUpdateService(
 
     fun start() {
         timer(name = "Nekura.jb - Ranking Auto Update Service", period = autoUpdateInterval) {
-            this@RankingAutoUpdateService.run()
+            try {
+                this@RankingAutoUpdateService.run()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }
