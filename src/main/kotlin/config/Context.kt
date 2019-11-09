@@ -20,7 +20,7 @@ internal object Context {
     private val recordService = MySqlRecordService(db)
 
     val rankingAutoUpdateService =
-        RankingAutoUpdateService(rankingFetcher, rankingRepository, rankingService, 30, 60 * 1000)
+        RankingAutoUpdateService(rankingFetcher, rankingRepository, rankingService, 30, 10 * 1000)
 
     val recordApplicationService = RecordApplicationService(recordService)
 

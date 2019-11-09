@@ -58,9 +58,9 @@ object ApiServer {
 
 @KtorExperimentalLocationsAPI
 @Location("/records") internal class Records(
-    val musicTitles: List<String> = listOf(),
-    val diffs: List<String> = listOf(),
-    val modes: List<String> = listOf(),
-    val playerNames: List<String> = listOf(),
-    val rivalIds: List<Long> = listOf()
+    val musicTitles: List<String>? = null,
+    val diffs: List<String>? = null,
+    val modes: List<String>? = null,
+    val playerNames: List<String>? = null,
+    val rivalIds: List<Long>? = null
 )
