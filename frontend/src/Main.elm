@@ -1,3 +1,5 @@
+module Main exposing (..)
+
 import Bootstrap.CDN
 import Bootstrap.Form
 import Bootstrap.Form.Checkbox
@@ -79,6 +81,7 @@ listToFilterModes list =
   }
 
 
+
 -- MODEL
 
 
@@ -129,6 +132,7 @@ init flags url key =
     }
   , Nav.pushUrl key (Url.toString url)
   )
+
 
 
 -- UPDATE
@@ -259,7 +263,7 @@ update msg model =
         , changeUrl model.key
             { filter
             | playerNames =
-                String.split "," playerNames
+                List.filter (not << String.isEmpty) (String.split "," playerNames)
             }
         )
 
@@ -286,7 +290,7 @@ update msg model =
 
 changeUrl : Nav.Key -> Filter -> Cmd Msg
 changeUrl key filter =
-  Nav.pushUrl key (Url.Builder.relative [] (filterToQueryParameters filter))
+  Nav.pushUrl key (Url.Builder.relative ["."] (filterToQueryParameters filter))
 
 
 
