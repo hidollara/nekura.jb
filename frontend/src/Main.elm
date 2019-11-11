@@ -1,16 +1,10 @@
 module Main exposing (..)
 
 import Bootstrap.CDN
-import Bootstrap.Form
-import Bootstrap.Form.Checkbox
-import Bootstrap.Form.Input
-import Bootstrap.Form.Textarea
 import Bootstrap.Grid
-import Bootstrap.Grid.Col
 import Browser
 import Browser.Navigation as Nav
-import Html exposing (..)
-import Html.Events
+import Html
 import Http
 import Json.Decode
 import Url
@@ -63,24 +57,10 @@ type alias Model =
   }
 
 
-
 init : () -> Url.Url -> Nav.Key -> (Model, Cmd Msg)
 init flags url key =
   ( { key = key
-    , filter =
-        { musicTitles = []
-        , diffs =
-            { basic = False
-            , advanced = False
-            , extreme = False
-            }
-        , modes =
-            { normal = False
-            , hard = False
-            }
-        , playerNames = []
-        , rivalIds = []
-        }
+    , filter = Filter.init
     , records = []
     }
   , Nav.pushUrl key (Url.toString url)
@@ -94,14 +74,7 @@ init flags url key =
 type Msg
   = LinkClicked Browser.UrlRequest
   | UrlChanged Url.Url
-  | FilterMusicTitlesChanged String
-  | FilterDiffsBasicChecked Bool
-  | FilterDiffsAdvancedChecked Bool
-  | FilterDiffsExtremeChecked Bool
-  | FilterModesNormalChecked Bool
-  | FilterModesHardChecked Bool
-  | FilterPlayerNamesChanged String
-  | FilterRivalIdsChanged String
+  | FilterMsgGot Filter.Msg
   | RecordsGot (Result Http.Error (List Record.Model))
 
 
@@ -131,106 +104,11 @@ update msg model =
         Nothing ->
           (model, Cmd.none)
 
-    FilterMusicTitlesChanged musicTitles ->
+    FilterMsgGot filterMessage ->
       let
-        filter = model.filter
+        filter = Filter.update filterMessage model.filter
       in
-        ( model
-        , changeUrl model.key
-            { filter
-            | musicTitles =
-                List.filter (not << String.isEmpty) (String.split "\n" musicTitles)
-            }
-        )
-
-    FilterDiffsBasicChecked bool ->
-      let
-        filter = model.filter
-        diffs = model.filter.diffs
-      in
-        ( model
-        , changeUrl model.key
-            { filter
-            | diffs =
-                { diffs | basic = bool }
-            }
-        )
-
-    FilterDiffsAdvancedChecked bool ->
-      let
-        filter = model.filter
-        diffs = model.filter.diffs
-      in
-        ( model
-        , changeUrl model.key
-            { filter
-            | diffs =
-                { diffs | advanced = bool }
-            }
-        )
-
-    FilterDiffsExtremeChecked bool ->
-      let
-        filter = model.filter
-        diffs = model.filter.diffs
-      in
-        ( model
-        , changeUrl model.key
-            { filter
-            | diffs =
-                { diffs | extreme = bool }
-            }
-        )
-
-    FilterModesNormalChecked bool ->
-      let
-        filter = model.filter
-        modes = model.filter.modes
-      in
-        ( model
-        , changeUrl model.key
-            { filter
-            | modes =
-                { modes | normal = bool }
-            }
-        )
-
-    FilterModesHardChecked bool ->
-      let
-        filter = model.filter
-        modes = model.filter.modes
-      in
-        ( model
-        , changeUrl model.key
-            { filter
-            | modes =
-                { modes | hard = bool }
-            }
-        )
-
-    FilterPlayerNamesChanged playerNames ->
-      let
-        filter = model.filter
-      in
-        ( model
-        , changeUrl model.key
-            { filter
-            | playerNames =
-                List.filter (not << String.isEmpty) (String.split "," playerNames)
-            }
-        )
-
-    FilterRivalIdsChanged rivalIds ->
-      let
-        filter = model.filter
-      in
-        ( model
-        , changeUrl model.key
-            { filter
-            | rivalIds =
-                List.filterMap String.toInt (String.split "," rivalIds)
-            }
-        )
+        ({ model | filter = filter }, changeUrl model.key filter)
 
     RecordsGot result ->
       case result of
@@ -262,91 +140,10 @@ view : Model -> Browser.Document Msg
 view model =
   { title = "根暗.jb"
   , body =
-      [ Bootstrap.CDN.stylesheet
-      , Bootstrap.Grid.container []
-          [ filterToForm model.filter
-          , Record.listToTable model.records
-          ]
-      ]
+        [ Bootstrap.CDN.stylesheet
+        , Bootstrap.Grid.container []
+            [ Html.map FilterMsgGot (Filter.toForm model.filter)
+            , Record.listToTable model.records
+            ]
+        ]
   }
-
-
-filterToForm : Filter.Model -> Html Msg
-filterToForm filter =
-  Bootstrap.Form.form []
-    [ Bootstrap.Form.row []
-        [ Bootstrap.Form.colLabel [ Bootstrap.Grid.Col.sm2 ] [ text "曲名" ]
-        , Bootstrap.Form.col [ Bootstrap.Grid.Col.sm10 ]
-            [ Bootstrap.Form.Textarea.textarea
-                [ Bootstrap.Form.Textarea.value (String.join "\n" filter.musicTitles)
-                , Bootstrap.Form.Textarea.attrs
-                    [ Html.Events.on "change" (Json.Decode.map FilterMusicTitlesChanged Html.Events.targetValue) ]
-                ]
-            ]
-        ]
-    , Bootstrap.Form.row []
-        [ Bootstrap.Form.colLabel [ Bootstrap.Grid.Col.sm2 ] [ text "難易度" ]
-        , Bootstrap.Form.col [ Bootstrap.Grid.Col.sm10 ]
-            [ Bootstrap.Form.Checkbox.checkbox
-                [ Bootstrap.Form.Checkbox.inline
-                , Bootstrap.Form.Checkbox.id "BASIC"
-                , Bootstrap.Form.Checkbox.checked filter.diffs.basic
-                , Bootstrap.Form.Checkbox.onCheck FilterDiffsBasicChecked
-                ]
-                "BASIC"
-            , Bootstrap.Form.Checkbox.checkbox
-                [ Bootstrap.Form.Checkbox.inline
-                , Bootstrap.Form.Checkbox.id "ADVANCED"
-                , Bootstrap.Form.Checkbox.checked filter.diffs.advanced
-                , Bootstrap.Form.Checkbox.onCheck FilterDiffsAdvancedChecked
-                ]
-                "ADVANCED"
-            , Bootstrap.Form.Checkbox.checkbox
-                [ Bootstrap.Form.Checkbox.inline
-                , Bootstrap.Form.Checkbox.id "EXTREME"
-                , Bootstrap.Form.Checkbox.checked filter.diffs.extreme
-                , Bootstrap.Form.Checkbox.onCheck FilterDiffsExtremeChecked
-                ]
-                "EXTREME"
-            ]
-        ]
-    , Bootstrap.Form.row []
-        [ Bootstrap.Form.colLabel [ Bootstrap.Grid.Col.sm2 ] [ text "ゲームモード" ]
-        , Bootstrap.Form.col [ Bootstrap.Grid.Col.sm10 ]
-            [ Bootstrap.Form.Checkbox.checkbox
-                [ Bootstrap.Form.Checkbox.inline
-                , Bootstrap.Form.Checkbox.id "NORMAL"
-                , Bootstrap.Form.Checkbox.checked filter.modes.normal
-                , Bootstrap.Form.Checkbox.onCheck FilterModesNormalChecked
-                ]
-                "NORMAL"
-            , Bootstrap.Form.Checkbox.checkbox
-                [ Bootstrap.Form.Checkbox.inline
-                , Bootstrap.Form.Checkbox.id "HARD"
-                , Bootstrap.Form.Checkbox.checked filter.modes.hard
-                , Bootstrap.Form.Checkbox.onCheck FilterModesHardChecked
-                ]
-                "HARD"
-            ]
-        ]
-    , Bootstrap.Form.row []
-        [ Bootstrap.Form.colLabel [ Bootstrap.Grid.Col.sm2 ] [ text "プレイヤー名" ]
-        , Bootstrap.Form.col [ Bootstrap.Grid.Col.sm10 ]
-            [ Bootstrap.Form.Input.text
-                [ Bootstrap.Form.Input.value (String.join "," filter.playerNames)
-                , Bootstrap.Form.Input.attrs
-                    [ Html.Events.on "change" (Json.Decode.map FilterPlayerNamesChanged Html.Events.targetValue) ]
-                ]
-            ]
-        ]
-    , Bootstrap.Form.row []
-        [ Bootstrap.Form.colLabel [ Bootstrap.Grid.Col.sm2 ] [ text "ライバルID" ]
-        , Bootstrap.Form.col [ Bootstrap.Grid.Col.sm10 ]
-            [ Bootstrap.Form.Input.text
-                [ Bootstrap.Form.Input.value (String.join "," (List.map String.fromInt filter.rivalIds))
-                , Bootstrap.Form.Input.attrs
-                    [ Html.Events.on "change" (Json.Decode.map FilterRivalIdsChanged Html.Events.targetValue) ]
-                ]
-            ]
-        ]
-    ]
