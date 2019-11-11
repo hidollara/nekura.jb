@@ -16,8 +16,8 @@ import Json.Decode
 import Url
 import Url.Builder
 import Url.Parser exposing ( (</>), (<?>))
-import Url.Parser.Query
 
+import Filter
 import Record
 
 
@@ -42,43 +42,14 @@ main =
 
 
 type Route
-  = TopRoute Filter
+  = TopRoute Filter.Model
 
 
 routeParser : Url.Parser.Parser (Route -> a) a
 routeParser =
   Url.Parser.oneOf
-    [ Url.Parser.map TopRoute (Url.Parser.top <?> queryParser)
+    [ Url.Parser.map TopRoute (Url.Parser.top <?> Filter.fromQueryString)
     ]
-
-
-queryParser : Url.Parser.Query.Parser Filter
-queryParser =
-  Url.Parser.Query.map Filter (Url.Parser.Query.custom "musicTitles" identity)
-    |> apply (Url.Parser.Query.custom "diffs" listToFilterDiffs)
-    |> apply (Url.Parser.Query.custom "modes" listToFilterModes)
-    |> apply (Url.Parser.Query.custom "playerNames" identity)
-    |> apply (Url.Parser.Query.custom "rivalIds" (List.filterMap String.toInt))
-
-
-apply : Url.Parser.Query.Parser a -> Url.Parser.Query.Parser (a -> b) -> Url.Parser.Query.Parser b
-apply argParser funcParser =
-  Url.Parser.Query.map2 (<|) funcParser argParser
-
-
-listToFilterDiffs : List String -> FilterDiffs
-listToFilterDiffs list =
-  { basic = List.member "BASIC" list
-  , advanced = List.member "ADVANCED" list
-  , extreme = List.member "EXTREME" list
-  }
-
-
-listToFilterModes : List String -> FilterModes
-listToFilterModes list =
-  { normal = List.member "NORMAL" list
-  , hard = List.member "HARD" list
-  }
 
 
 
@@ -87,28 +58,10 @@ listToFilterModes list =
 
 type alias Model =
   { key : Nav.Key
-  , filter : Filter
+  , filter : Filter.Model
   , records : List Record.Model
   }
 
-type alias Filter =
-  { musicTitles : List String
-  , diffs : FilterDiffs
-  , modes : FilterModes
-  , playerNames : List String
-  , rivalIds : List Int
-  }
-
-type alias FilterDiffs =
-  { basic : Bool
-  , advanced : Bool
-  , extreme : Bool
-  }
-
-type alias FilterModes =
-  { normal : Bool
-  , hard : Bool
-  }
 
 
 init : () -> Url.Url -> Nav.Key -> (Model, Cmd Msg)
@@ -169,7 +122,7 @@ update msg model =
           ( { model | filter = filter }
           , Http.get
               { url =
-                  Url.Builder.crossOrigin "http://localhost:8080" [ "api", "records" ] (filterToQueryParameters filter)
+                  Url.Builder.crossOrigin "http://localhost:8080" [ "api", "records" ] (Filter.toQueryParameters filter)
               , expect =
                   Http.expectJson RecordsGot (Json.Decode.list Record.decoder)
               }
@@ -288,9 +241,9 @@ update msg model =
           (model, Cmd.none)
 
 
-changeUrl : Nav.Key -> Filter -> Cmd Msg
+changeUrl : Nav.Key -> Filter.Model -> Cmd Msg
 changeUrl key filter =
-  Nav.pushUrl key (Url.Builder.relative ["."] (filterToQueryParameters filter))
+  Nav.pushUrl key (Url.Builder.relative ["."] (Filter.toQueryParameters filter))
 
 
 
@@ -318,7 +271,7 @@ view model =
   }
 
 
-filterToForm : Filter -> Html Msg
+filterToForm : Filter.Model -> Html Msg
 filterToForm filter =
   Bootstrap.Form.form []
     [ Bootstrap.Form.row []
@@ -396,22 +349,4 @@ filterToForm filter =
                 ]
             ]
         ]
-    ]
-
-
-filterToQueryParameters : Filter -> List Url.Builder.QueryParameter
-filterToQueryParameters filter =
-  List.concat
-    [ List.map (Url.Builder.string "musicTitles") filter.musicTitles
-    , List.filterMap identity
-        [ if filter.diffs.basic then Just (Url.Builder.string "diffs" "BASIC") else Nothing
-        , if filter.diffs.advanced then Just (Url.Builder.string "diffs" "ADVANCED") else Nothing
-        , if filter.diffs.extreme then Just (Url.Builder.string "diffs" "EXTREME") else Nothing
-        ]
-    , List.filterMap identity
-        [ if filter.modes.normal then Just (Url.Builder.string "modes" "NORMAL") else Nothing
-        , if filter.modes.hard then Just (Url.Builder.string "modes" "HARD") else Nothing
-        ]
-    , List.map (Url.Builder.string "playerNames") filter.playerNames
-    , List.map (Url.Builder.int "rivalIds") filter.rivalIds
     ]
