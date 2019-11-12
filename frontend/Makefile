@@ -1,8 +1,10 @@
 deploy: index.min.js
 
+run:
+	yarn run --silent elm-live src/Main.elm -u
+
 clean:
-	rm index.js
-	rm index.min.js
+	rm -f index.html index.js index.min.js
 
 index.js: src/Main.elm src/*
 	yarn run --silent elm make --optimize --output=$@ $<
