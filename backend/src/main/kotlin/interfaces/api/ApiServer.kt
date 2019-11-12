@@ -35,7 +35,7 @@ object ApiServer {
         }
         install(CORS) {
             host("localhost:8000")
-            host("hidollara.github.io")
+            host("hidollara.github.io", schemes=listOf("https"))
         }
         install(Routing) {
             route("/api") {
