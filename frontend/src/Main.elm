@@ -95,7 +95,7 @@ update msg model =
           ( { model | filter = filter }
           , Http.get
               { url =
-                  Url.Builder.crossOrigin "http://localhost:8080" [ "api", "records" ] (Filter.toQueryParameters filter)
+                  Url.Builder.crossOrigin "http://35.199.169.182:8080" [ "api", "records" ] (Filter.toQueryParameters filter)
               , expect =
                   Http.expectJson RecordsGot (Json.Decode.list Record.decoder)
               }
