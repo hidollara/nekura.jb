@@ -33,6 +33,17 @@ compileTestKotlin {
 
 mainClassName = 'MainKt'
 
+jar {
+    manifest {
+        attributes 'Main-Class': "MainKt"
+    }
+    from {
+        configurations.compileClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
+
 task updateMusics(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'MusicsUpdaterKt'
