@@ -42,7 +42,7 @@ type Route
 routeParser : Url.Parser.Parser (Route -> a) a
 routeParser =
   Url.Parser.oneOf
-    [ Url.Parser.map TopRoute (Url.Parser.top <?> Filter.fromQueryString)
+    [ Url.Parser.map TopRoute (Url.Parser.s "nekura.jb" </> Url.Parser.top <?> Filter.fromQueryString)
     ]
 
 
@@ -92,7 +92,7 @@ update msg model =
     UrlChanged url ->
       case (Url.Parser.parse routeParser url) of
         Just (TopRoute filter) ->
-          ( { model | filter = filter }
+          ( model
           , Http.get
               { url =
                   Url.Builder.crossOrigin "https://hidollara.work" [ "api", "records" ] (Filter.toQueryParameters filter)
