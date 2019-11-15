@@ -41,9 +41,10 @@ type Route
 
 routeParser : Url.Parser.Parser (Route -> a) a
 routeParser =
-  Url.Parser.oneOf
-    [ Url.Parser.map TopRoute (Url.Parser.s "nekura.jb" </> Url.Parser.top <?> Filter.fromQueryString)
-    ]
+  Url.Parser.s "nekura.jb" </>
+    Url.Parser.oneOf
+      [ Url.Parser.map TopRoute (Url.Parser.top <?> Filter.fromQueryString)
+      ]
 
 
 
@@ -92,7 +93,7 @@ update msg model =
     UrlChanged url ->
       case (Url.Parser.parse routeParser url) of
         Just (TopRoute filter) ->
-          ( model
+          ( { model | filter = filter }
           , Http.get
               { url =
                   Url.Builder.crossOrigin "https://hidollara.work" [ "api", "records" ] (Filter.toQueryParameters filter)
@@ -102,13 +103,10 @@ update msg model =
           )
 
         Nothing ->
-          (model, Cmd.none)
+          (model, Nav.pushUrl model.key (Url.Builder.absolute ["nekura.jb", ""] []))
 
     FilterMsgGot filterMessage ->
-      let
-        filter = Filter.update filterMessage model.filter
-      in
-        ({ model | filter = filter }, changeUrl model.key filter)
+      (model, changeUrl model.key (Filter.update filterMessage model.filter))
 
     RecordsGot result ->
       case result of
@@ -121,7 +119,7 @@ update msg model =
 
 changeUrl : Nav.Key -> Filter.Model -> Cmd Msg
 changeUrl key filter =
-  Nav.pushUrl key (Url.Builder.relative ["."] (Filter.toQueryParameters filter))
+  Nav.pushUrl key (Url.Builder.absolute ["nekura.jb", ""] (Filter.toQueryParameters filter))
 
 
 
