@@ -81,7 +81,7 @@ toTableRow record =
 posixToString : Time.Posix -> String
 posixToString posix =
   let
-    timezone = TimeZone.asia__tokyo ()
+    timezone = Time.utc
     year = String.fromInt (Time.toYear timezone posix)
     month = String.fromInt (monthToInt (Time.toMonth timezone posix))
     day = String.fromInt (Time.toDay timezone posix)
